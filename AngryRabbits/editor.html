@@ -14,18 +14,22 @@
 
         <!-- Title and data of assignment -->
         <header>
-            <h1>Angry Rabbits Editor </h1>
+            <h1>Angry Pigs Editor </h1>
         </header>
         <!-- End of title -->
 
-        <section class="my-editor">
+        <section id="editor-area" class="editor">
+            <div class="my-title"><h1>Editor Section</h1></div>
+            <div class="my-background droptarget"></div>
+        </section>
+        
+        <section id="displayOptions" class="displayOptions">
             <section id="info-level">
                 <h1>Select options</h1>
                 <form id="level-form" class="level-form">
                     <label>Name:</label>
                     <select name="levelOptions" id="level-list" class="level-list">
-                        
-                        <!-- MORE LEVELS TO BE DONE -->
+                        <!-- MORE LEVELS CAN BE DONE BY THE USER -->
                     </select>
                     </br>
                     <label>Obstacles: <input type="number" name="obstacles"></label>
@@ -43,12 +47,6 @@
                     <label>Three Star Score: <input type="number" name="threeScore"></label>
                     <div id="save-button" class="my-button"><button type="submit">Save</button></div>
                 </form>
-                
-            </section>
-
-            <section id="editor-area" class="editor">
-                <h1>Editor Section</h1>
-                <div class="my-background droptarget"></div>
             </section>
 
             <section class="my-draggables">
@@ -56,11 +54,37 @@
                 <div id="object-library" class="boxes">
                     <div id="box1" class="box1 draggable" draggable="true">Box 1:</div>
                     <div id="box2" class="box2 draggable" draggable="true">Box 2:</div>
+                    <div id="rabbit" class="rabbit draggable" draggable="true">Rabbit:</div>
                 </div>
+                <div id="save-button" class="my-button"><button type="submit">Save placed objects</button></div>
             </section>
-        </section>
-        
 
+            <section id="new-blocks" class="new-blocks">
+                <h1>Create a new block type</h1>
+                <form id="blocks-form" class="blocks-form">
+                    <label>Type: <input type="number" name="type"> </label>
+                    </br>
+                    <label>Name: <input type="text" name="name"></label>
+                    </br>
+                    <label>Height: <input type="number" name="height"></label>
+                    </br>
+                    <label>Width: <input type="number" name="width"></label>
+                    </br>
+                    <label>Texture: <input type="text" name="texture"></label>
+                    </br>
+                    <label>Shape: <input type="number" name="shape"></label>
+                    </br>
+                    <label>Friction: <input type="number" name="friction"></label>
+                    </br>
+                    <label>Mass: <input type="number" name="Mass"></label>
+                    </br>
+                    <label>Restitution: <input type="number" name="restitution"></label>
+                    </br>
+                    <div id="save-button" class="my-button"><button type="submit">Save</button></div>
+                </form>
+            </section>
+
+        </section>
         
 
         <!-- Footer -->
