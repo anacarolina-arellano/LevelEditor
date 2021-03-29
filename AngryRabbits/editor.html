@@ -1,0 +1,76 @@
+<!-- Copyright (c) 2021, Ana Carolina Arellano -->
+<!-- This is my assignment #2 of Javascript Web Apps -->
+<!DOCTYPE html>
+<html>
+    <!-- head -> import stylesheet -->
+    <head>
+        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <script src="//cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.6/interact.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+    </head>
+
+    <!-- Body of web page -->
+    <body>
+
+        <!-- Title and data of assignment -->
+        <header>
+            <h1>Angry Rabbits Editor </h1>
+        </header>
+        <!-- End of title -->
+
+        <section class="my-editor">
+            <section id="info-level">
+                <h1>Select options</h1>
+                <form id="level-form" class="level-form">
+                    <label>Name:</label>
+                    <select name="levelOptions" id="level-list" class="level-list">
+                        
+                        <!-- MORE LEVELS TO BE DONE -->
+                    </select>
+                    </br>
+                    <label>Obstacles: <input type="number" name="obstacles"></label>
+                    </br>
+                    <label>Cannons: <input type="number" name="cannons"></label>
+                    </br>
+                    <label>Max Shots: <input type="number" name="numShot"></label>
+                    </br>
+                    <label>Background: <input type="text" name="background"></label>
+                    </br>
+                    <label>One Star Score: <input type="number" name="oneScore"></label>
+                    </br>
+                    <label>Two Star Score: <input type="number" name="twoScore"></label>
+                    </br>
+                    <label>Three Star Score: <input type="number" name="threeScore"></label>
+                    <div id="save-button" class="my-button"><button type="submit">Save</button></div>
+                </form>
+                
+            </section>
+
+            <section id="editor-area" class="editor">
+                <h1>Editor Section</h1>
+                <div class="my-background droptarget"></div>
+            </section>
+
+            <section class="my-draggables">
+                <h1>Drag and drop the elements</h1>
+                <div id="object-library" class="boxes">
+                    <div id="box1" class="box1 draggable" draggable="true">Box 1:</div>
+                    <div id="box2" class="box2 draggable" draggable="true">Box 2:</div>
+                </div>
+            </section>
+        </section>
+        
+
+        
+
+        <!-- Footer -->
+        <footer id = "end" class = "end">
+            Built with love. <br>
+            Copyright: Ana Carolina Arellano, 2021           
+        </footer>
+
+        <script type="module" src="./editor.js"></script>
+    </body>
+    <!-- End of body -->
+    
+</html>

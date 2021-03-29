@@ -1,0 +1,101 @@
+/* Copyright (c) 2021, Ana Carolina Arellano*/
+body{
+    padding-top: 2rem;
+    padding-left: 3rem;
+    padding-right: 3rem;
+    padding-bottom: 1rem;
+    font-family: "Optima";
+}
+img{
+    height: 250px;
+    display: block; /*Retrieved from https://www.dariobf.com/centrar-img-imagen-html-con-css/*/
+    margin: auto;   /*Retrieved from https://www.dariobf.com/centrar-img-imagen-html-con-css/*/
+    padding-bottom: 1.5rem;
+}
+p{
+    font-size: 18px;
+    line-height: 2rem;
+}
+header{
+    text-align: center;
+}
+label{
+    font-size: 20px;
+    margin-bottom: 15px;
+}
+option{
+    font-size: 20px;
+}
+.title {
+    text-align: center;
+}
+.title h1{
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+.title h4{
+    font-style: italic;
+    font-size: 20px;
+    margin-top: 0px;
+}
+.end{
+    margin-top: 35px;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 21px;
+}
+.my-button{
+    margin-top: 15px;
+}
+.my-editor{
+    display: flex;
+    flex-flow: row wrap;
+}
+.editor{
+    text-align: center;
+    margin-left: 10px;
+    align-items: center;
+    width: 60%;
+}
+.editor .my-background {
+    width: 100%;
+    height: 90%;
+    background-position: center;
+    background-color: dimgray;
+    background-image: url(../images/backG.png);
+    background-size: contain;
+    
+    background-repeat: no-repeat;
+}
+.my-editor #info-level{
+    margin-left: 10px;
+    flex-direction: column;
+    width: 15%;
+}
+.my-editor .my-draggables{
+    margin-left: 15px;
+    flex-direction: column;
+    width: 15%;
+}
+.my-editor h1{
+    font-size: 24px;
+}
+.my-draggables #object-library.boxes .box1{
+    background-image: url(../images/box.png);
+    background-size: contain;
+    height:120px;
+    background-repeat: no-repeat;
+    user-select: none;
+    cursor: move;
+}
+.my-draggables #object-library.boxes .box2{
+    background-image: url(../images/box2.png);
+    background-size: contain;
+    height:120px;
+    background-repeat: no-repeat;
+    user-select: none;
+    cursor: move;
+}
+.droptarget{
+    transition: border-width 0.5s linear;
+}
