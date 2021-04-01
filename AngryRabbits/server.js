@@ -18,6 +18,7 @@ class Server {
                 .use(Express.urlencoded({extended: false}))
                 .use(Express.static(Path.join(__dirname, '.')));
 
+        this.objectList = ['largeBoxO', 'smallBoxO', 'rabbitO', 'cannonO'];
         //Get home page
         this.api.get('/', (request, response) => {
             response.sendFile('./index.html', {title: 'Angry Rabbits'});
@@ -31,7 +32,7 @@ class Server {
         })
 
         this.api.post('/api/get_level_list/:username', (request, response) => {
-            let levelNameList = ['Level_1', 'Level_2', 'Level_3', 'New Level...'];
+            let levelNameList = ['Level_1', 'Level_2', 'Level_3', 'New_Level...'];
             response.send(JSON.stringify(levelNameList));
         });
 
@@ -47,7 +48,6 @@ class Server {
                 .then(() => FileSystem.readJSON(fileName))
                 .then(levelData => {
                     reply.payload = levelData;
-                    console.log(levelData);
                 })
                 .catch(err => {
                     reply.error(1, "Wrong data")
@@ -56,6 +56,33 @@ class Server {
                 .then(() => response.send(reply.ok().serialize()));
                 
         });
+
+        this.api.post('/api/save_block', (request, response) => {
+            //retrieve body
+            const body = request.body;
+            //Reply
+            let reply = new Reply();
+
+            const fileName = `./scripts/data/library/object-${body.type}.json`
+            this.objectList.push(body.name);
+            //write data into file depending on the name of edited level
+            FileSystem.outputJSON(fileName, body)
+                .then(() => FileSystem.readJSON(fileName))
+                .then(blockData => {
+                    reply.payload = blockData;
+                })
+                .catch(err => {
+                    reply.error(1, "Wrong data")
+                    console.error(err);
+                })
+                .then(() => response.send(reply.ok().serialize()));
+                
+        });
+
+        this.api.post('/api/get_object_list', (request, response) => {
+            response.send(JSON.stringify(this.objectList));
+        });
+        
         this.api.post('/api/load', (request, response) => {
             let parameters = request.body;
             let reply = new Reply();
@@ -66,7 +93,7 @@ class Server {
             }
 
             //open some file, the name is in parameters
-            FileSystem.readFile(`${folder}/${parameters.name}.json`, 'utf8')
+            FileSystem.readFile(`${folder}/${parameters.type}.json`, 'utf8')
             .then(fileData => {
                 reply.payload = fileData;
             })

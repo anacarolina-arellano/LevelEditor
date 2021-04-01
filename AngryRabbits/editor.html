@@ -18,27 +18,28 @@
         </header>
         <!-- End of title -->
 
+        <!-- Area where the users can place the draggable elements -->
         <section id="editor-area" class="editor">
             <div class="my-title"><h1>Editor Section</h1></div>
-            <div class="my-background droptarget"></div>
+            <div id="droptarget" class="my-background droptarget"></div>
         </section>
+        <!-- End of editor area -->
         
+        <!-- Area where the users can write the properties of the level -->
         <section id="displayOptions" class="displayOptions">
+            <!-- The user can write the information in the input fields-->
             <section id="info-level">
                 <h1>Select options</h1>
                 <form id="level-form" class="level-form">
                     <label>Name:</label>
                     <select name="levelOptions" id="level-list" class="level-list">
-                        <!-- MORE LEVELS CAN BE DONE BY THE USER -->
+                        <!-- THE LEVELS CAN BE EDITED BY THE USER -->
                     </select>
                     </br>
+                    <label id="newName" class="hide">Name: <input type="text" name="name"></label>
                     <label>Obstacles: <input type="number" name="obstacles"></label>
                     </br>
-                    <label>Cannons: <input type="number" name="cannons"></label>
-                    </br>
                     <label>Max Shots: <input type="number" name="numShot"></label>
-                    </br>
-                    <label>Background: <input type="text" name="background"></label>
                     </br>
                     <label>One Star Score: <input type="number" name="oneScore"></label>
                     </br>
@@ -48,17 +49,18 @@
                     <div id="save-button" class="my-button"><button type="submit">Save</button></div>
                 </form>
             </section>
+            <!-- End of form-->
 
+            <!-- Start of draggable elements -->
             <section class="my-draggables">
                 <h1>Drag and drop the elements</h1>
                 <div id="object-library" class="boxes">
-                    <div id="box1" class="box1 draggable" draggable="true">Box 1:</div>
-                    <div id="box2" class="box2 draggable" draggable="true">Box 2:</div>
-                    <div id="rabbit" class="rabbit draggable" draggable="true">Rabbit:</div>
+                    <!-- Object Library is loaded by javascript-->
                 </div>
-                <div id="save-button" class="my-button"><button type="submit">Save placed objects</button></div>
             </section>
+            <!-- End of draggable elements -->
 
+            <!-- Start of form that allows users to create new block types -->
             <section id="new-blocks" class="new-blocks">
                 <h1>Create a new block type</h1>
                 <form id="blocks-form" class="blocks-form">
@@ -70,9 +72,9 @@
                     </br>
                     <label>Width: <input type="number" name="width"></label>
                     </br>
-                    <label>Texture: <input type="text" name="texture"></label>
+                    <label>Texture: <input type="number" name="texture"></label>
                     </br>
-                    <label>Shape: <input type="number" name="shape"></label>
+                    <label>Shape: <input type="text" name="shape"></label>
                     </br>
                     <label>Friction: <input type="number" name="friction"></label>
                     </br>
@@ -83,10 +85,19 @@
                     <div id="save-button" class="my-button"><button type="submit">Save</button></div>
                 </form>
             </section>
-
+            <!-- End of section to create new block types -->
         </section>
         
-
+         <!-- Start of loading option -->
+         <section id="loadOpt"  class="loadOpt">
+            <h1>Load A level</h1>
+            <h1>Select options</h1>
+                 <label>Name:</label>
+                <select name="levelOptions" id="level-list2" class="level-list">
+                     <!-- THE LEVELS CAN BE EDITED BY THE USER -->
+                </select>
+        </section>
+        <!-- End of section to create new block types -->
         <!-- Footer -->
         <footer id = "end" class = "end">
             Built with love. <br>

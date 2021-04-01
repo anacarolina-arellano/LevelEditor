@@ -5,17 +5,23 @@ body{
     padding-right: 3rem;
     padding-bottom: 1rem;
     font-family: "Optima";
+    background-color: black;
 }
 button{
     font-size: 20px;
     margin-bottom: 10px;
 }
 header{
+    margin: 0 auto;
+    width: 1280px;
     text-align: center;
     font-size: 30px;
+    color: white;
+    border-radius: 10px;
 }
 input{
     width: 97%;
+    height: 1.5em;
 }
 label{
     font-size: 20px;
@@ -27,7 +33,10 @@ option{
 p{
     font-size: 18px;
 }
+
 .end{
+    margin-left: auto;
+    margin-right: auto;
     margin-top: 35px;
     margin-bottom: 15px;
     text-align: center;
@@ -38,28 +47,43 @@ p{
 }
 .my-title{
     height: 2em;
-    background-color: #1ca1d6;
+    background-color: gray;
+    color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    /*#1ca1d6;*/
     margin-bottom: 0% ;
 }
+footer{
+    color: white;
+}
 .editor{
+    margin-left: auto;
+    margin-right: auto;
     width: 1280px;
     flex-direction: column;
     font-size: 20px;
     text-align: center;
     align-items: center;
+    border-radius: 10px;
 }
 .editor .my-background {
     width: 1280px;
     height: 720px;
     background-position: center;
     background-image: url(../images/backG.png);
+    background-color: lightgrey;
     background-size: 1280px 720px;
     background-repeat: no-repeat;
+    border-radius: 10px;
 }
 .level-list{
     font-size: 18px;
 }
 .displayOptions{
+    margin-left: auto;
+    margin-right: auto;
+    width: 1280px;
     margin-top: 2em;
     display: flex;
     flex-flow: row wrap;
@@ -70,6 +94,7 @@ p{
     margin-right: 50px;
     flex-direction: column;
     flex-grow: 1;
+    border-radius: 25px;
 }
 .displayOptions .my-draggables{
     background-color: #E8eaeb;
@@ -77,18 +102,25 @@ p{
     margin-right: 50px;
     flex-direction: column;
     flex-grow: 1;
+    border-radius: 25px;
 }
 .displayOptions .new-blocks{
     background-color: #E8eaeb;
     flex-direction: column;
     flex-grow: 1;
+    border-radius: 25px;
 }
 .displayOptions h1{
+    text-align: center;
+    color: white;
     margin-top: 0em;
     font-size: 27px;
-    background-color: #1ca1d6;
+    background-color: gray;
+    border-radius: 10px;
+    height: 1.5em;
+    /*#1ca1d6;*/
 }
-.my-draggables #object-library.boxes .box1{
+.my-draggables #object-library.boxes .smallBoxO{
     background-image: url(../images/box.png);
     background-size: contain;
     background-position: center;
@@ -96,9 +128,21 @@ p{
     background-repeat: no-repeat;
     user-select: none;
     cursor: move;
+    z-index: 1000;
 }
-.my-draggables #object-library.boxes .rabbit{
+.my-draggables #object-library.boxes .rabbitO{
     background-image: url(../images/conejo.png);
+    background-size: contain;
+    background-position: center;
+    height:120px;
+    background-repeat: no-repeat;
+    user-select: none;
+    cursor: move;
+    z-index: 1000;
+    
+}
+.my-draggables #object-library.boxes .largeBoxO{
+    background-image: url(../images/box2.png);
     background-size: contain;
     background-position: center;
     height:120px;
@@ -107,15 +151,6 @@ p{
     cursor: move;
     
 }
-.my-draggables #object-library.boxes .box2{
-    background-image: url(../images/box2.png);
-    background-size: contain;
-    background-position: center;
-    height:120px;
-    background-repeat: no-repeat;
-    user-select: none;
-    cursor: move;
-}
 .my-button{
     display: flex;
   justify-content: center;
@@ -123,4 +158,36 @@ p{
 }
 .droptarget{
     transition: border-width 0.5s linear;
+}
+
+.object-draggable{
+    background-size: contain;
+    background-position: center;
+    height:120px;
+    background-repeat: no-repeat;
+    z-index: 1000;
+}
+.largeBox{
+    background-image: url(../images/box2.png);
+}
+
+.smallBox{
+    background-image: url(../images/box.png);
+}
+
+.rabbit{
+    background-image: url(../images/conejo.png);
+}
+.cannonO{
+    background-image: url(../images/cannon1.png);
+}
+.loadOpt{
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+    width: 1280px;
+}
+
+.hide{
+    display: none ;
 }
