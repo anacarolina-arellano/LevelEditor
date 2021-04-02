@@ -71,13 +71,16 @@ footer{
     width: 1280px;
     height: 720px;
     background-position: center;
-    background-image: url(../images/backG.png);
+    background-image: url(../images/background1.png);
     background-color: lightgrey;
     background-size: 1280px 720px;
     background-repeat: no-repeat;
     border-radius: 10px;
 }
 .level-list{
+    font-size: 18px;
+}
+.texture-list{
     font-size: 18px;
 }
 .displayOptions{
@@ -120,8 +123,7 @@ footer{
     height: 1.5em;
     /*#1ca1d6;*/
 }
-.my-draggables #object-library.boxes .smallBoxO{
-    background-image: url(../images/box.png);
+.my-draggables #object-library.boxes {
     background-size: contain;
     background-position: center;
     height:120px;
@@ -130,27 +132,7 @@ footer{
     cursor: move;
     z-index: 1000;
 }
-.my-draggables #object-library.boxes .rabbitO{
-    background-image: url(../images/conejo.png);
-    background-size: contain;
-    background-position: center;
-    height:120px;
-    background-repeat: no-repeat;
-    user-select: none;
-    cursor: move;
-    z-index: 1000;
-    
-}
-.my-draggables #object-library.boxes .largeBoxO{
-    background-image: url(../images/box2.png);
-    background-size: contain;
-    background-position: center;
-    height:120px;
-    background-repeat: no-repeat;
-    user-select: none;
-    cursor: move;
-    
-}
+
 .my-button{
     display: flex;
   justify-content: center;
@@ -168,18 +150,21 @@ footer{
     z-index: 1000;
 }
 .largeBox{
-    background-image: url(../images/box2.png);
+    background-image: url(../images/largeBox.png);
 }
 
 .smallBox{
-    background-image: url(../images/box.png);
+    background-image: url(../images/smallBox.png);
 }
 
 .rabbit{
-    background-image: url(../images/conejo.png);
+    background-image: url(../images/rabbit.png);
 }
-.cannonO{
-    background-image: url(../images/cannon1.png);
+.cannon{
+    background-image: url(../images/cannon.png);
+}
+.carrot{
+    background-image: url(../images/carrot.png);
 }
 .loadOpt{
     margin-left: auto;

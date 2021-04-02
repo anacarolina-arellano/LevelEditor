@@ -14,7 +14,7 @@
 
         <!-- Title and data of assignment -->
         <header>
-            <h1>Angry Pigs Editor </h1>
+            <h1>Angry Rabbits Editor </h1>
         </header>
         <!-- End of title -->
 
@@ -36,7 +36,7 @@
                         <!-- THE LEVELS CAN BE EDITED BY THE USER -->
                     </select>
                     </br>
-                    <label id="newName" class="hide">Name: <input type="text" name="name"></label>
+                    <label id="newName" class="hide">Name: <input type="text" name="newName"></label>
                     <label>Obstacles: <input type="number" name="obstacles"></label>
                     </br>
                     <label>Max Shots: <input type="number" name="numShot"></label>
@@ -72,7 +72,10 @@
                     </br>
                     <label>Width: <input type="number" name="width"></label>
                     </br>
-                    <label>Texture: <input type="number" name="texture"></label>
+                    <label>Texture:</label>
+                    <select name="texture" id="texture-list" class="texture-list">
+                        <!-- THE TEXTURES WILL BE LOADED WITH THE SCRIPT -->
+                    </select>
                     </br>
                     <label>Shape: <input type="text" name="shape"></label>
                     </br>

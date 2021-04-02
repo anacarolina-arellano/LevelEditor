@@ -12,6 +12,9 @@ export default class Editor {
         //fetch the list of gameobjects
         this.populateGameObjectList();
                   
+        //fetch the list of textures
+        this.populateTexturesList();
+
         //handle user save events
         //Set up event handler for level form submit
         $("#level-form").on('submit', event => this.handleSubmitForm(event));
@@ -46,7 +49,6 @@ export default class Editor {
         let myText = $(".level-list").children("option:selected").val();
         if(myText == "New_Level..."){
           $("#newName").removeClass("hide");
-        //  $("#level-form").prepend(`<label>Name: <input type="text" name="levelOptions"></label>`)
         }
         else{
           $("#newName").addClass("hide");
@@ -70,7 +72,25 @@ export default class Editor {
                 reject(error)
               })
       })
-      
+    }
+
+    //Display textures list 
+    populateTexturesList(){
+      //post message to server
+      $.post('/api/get_textures')
+        .then(rawData => JSON.parse(rawData))
+        .then(newTextureData => {
+          this.addTexturesList(newTextureData);
+        }); 
+    }
+
+    //add html for options (of textures)
+    addTexturesList(texturesList){
+      let id = 0;
+      texturesList.forEach(texture => {
+        $(".texture-list").append(`<option id="${id}" value="${texture}">${texture}</option>`);
+        id++;
+      });
     }
     
     //Get information from "info-level" form
@@ -118,12 +138,6 @@ export default class Editor {
          //attach transfer data to the event
           event.originalEvent.dataTransfer.setData("text", JSON.stringify(transferData));
           event.originalEvent.dataTransfer.effectAllowed = "move";
-  
-          //grab offset
-          this.$dragTarget = $(event.target);
-          //z index
-          //this.z = this.$dragTarget.css("zIndex");
-          
       });        
     });
 

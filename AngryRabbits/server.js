@@ -18,7 +18,9 @@ class Server {
                 .use(Express.urlencoded({extended: false}))
                 .use(Express.static(Path.join(__dirname, '.')));
 
-        this.objectList = ['largeBoxO', 'smallBoxO', 'rabbitO', 'cannonO'];
+        //default list of objects
+        this.objectList = ['largeBox', 'smallBox', 'rabbit', 'cannon'];
+
         //Get home page
         this.api.get('/', (request, response) => {
             response.sendFile('./index.html', {title: 'Angry Rabbits'});
@@ -26,23 +28,50 @@ class Server {
 
         //Get editor page
         this.api.get('/', (request, response) => {
-            //let indexFile = `${Path.join(__dirname, './')}editor.html`;
-            //response.sendFile(indexFile, {title:`${this.title}Editor`});
             response.sendFile('./editor.html', {title:`${this.title} Editor`});
         })
 
+        //Returns the list of levels that are saved in the editor
         this.api.post('/api/get_level_list/:username', (request, response) => {
-            let levelNameList = ['Level_1', 'Level_2', 'Level_3', 'New_Level...'];
-            response.send(JSON.stringify(levelNameList));
+            let levelNameList = [];
+            //Consulted page for this snippet of code: https://www.codegrepper.com/code-examples/javascript/get+names+of+all+files+inside+a+folder+node
+            FileSystem.readdir("./scripts/data/", (err, files) => {
+                //handling error
+                if (err) {
+                    return console.error(err);
+                } 
+                //listing all files using forEach
+                files.forEach(file => {
+                    //consulted page to get the extension: https://dev.to/jalal246/detect-extension-in-a-directory-using-node-js-b9l
+                    if(file.split(".").pop() == "json"){
+                        //page consulted: https://stackoverflow.com/questions/4250364/how-to-trim-a-file-extension-from-a-string-in-javascript
+                        levelNameList.push(file.split('.').slice(0, -1).join('.'))
+                    }
+                });
+                //provide option to add level with new name
+                levelNameList.push("New_Level...") 
+                response.send(JSON.stringify(levelNameList));
+            });
         });
 
+        //save information of the level
         this.api.post('/api/save', (request, response) => {
             //retrieve body
             const body = request.body;
             //Reply
             let reply = new Reply();
 
-            const fileName = `./scripts/data/${body.levelOptions}.json`
+            let fileName;
+            //check if user chose to add a level with a new name
+            if(`${body.levelOptions}` == "New_Level..."){
+                //save file with specified name
+                fileName = `./scripts/data/${body.newName}.json`
+            }
+            else{
+                //name was one of the displayed options
+                fileName = `./scripts/data/${body.levelOptions}.json`
+            }
+            
             //write data into file depending on the name of edited level
             FileSystem.outputJSON(fileName, body)
                 .then(() => FileSystem.readJSON(fileName))
@@ -57,6 +86,7 @@ class Server {
                 
         });
 
+        //save the block type that the user created
         this.api.post('/api/save_block', (request, response) => {
             //retrieve body
             const body = request.body;
@@ -64,7 +94,7 @@ class Server {
             let reply = new Reply();
 
             const fileName = `./scripts/data/library/object-${body.type}.json`
-            this.objectList.push(body.name);
+            this.objectList.push(body.texture);
             //write data into file depending on the name of edited level
             FileSystem.outputJSON(fileName, body)
                 .then(() => FileSystem.readJSON(fileName))
@@ -76,13 +106,14 @@ class Server {
                     console.error(err);
                 })
                 .then(() => response.send(reply.ok().serialize()));
-                
         });
 
+        //Returns the list of objects saved in the editor
         this.api.post('/api/get_object_list', (request, response) => {
             response.send(JSON.stringify(this.objectList));
         });
         
+        //Returns the information of a saved level
         this.api.post('/api/load', (request, response) => {
             let parameters = request.body;
             let reply = new Reply();
@@ -104,9 +135,32 @@ class Server {
             response.send(reply.ok().serialize());
         })
 
+        //Returns the list of available textures/images 
+        this.api.post('/api/get_textures', (request, response) => {
+            let texturesList = [];
+            //Consulted page for this snippet of code: https://www.codegrepper.com/code-examples/javascript/get+names+of+all+files+inside+a+folder+node
+            FileSystem.readdir("./images/", (err, files) => {
+                //handling error
+                if (err) {
+                    return console.error(err);
+                } 
+                //listing all files using forEach
+                files.forEach(file => {
+                    //consulted page to get the extension: https://dev.to/jalal246/detect-extension-in-a-directory-using-node-js-b9l
+                    if(file.split(".").pop() == "png"){
+                        //page consulted: https://stackoverflow.com/questions/4250364/how-to-trim-a-file-extension-from-a-string-in-javascript
+                        texturesList.push(file.split('.').slice(0, -1).join('.'))
+                    }
+                });
+                //return list of available textures
+                response.send(JSON.stringify(texturesList));
+            });
+        });
+        //start running the project
         this.run();
     }
 
+    //run the project and listen to the specified port
     run(){
         this.api.set('port', PORT);
         this.listener = HTTP.createServer(this.api);
