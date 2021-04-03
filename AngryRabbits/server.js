@@ -16,11 +16,8 @@ class Server {
         this.title = "Angry Rabbits";
         this.api = Express();
         this.api.use(Express.json())
-            .use(Express.urlencoded({ extended: false }))
+            .use(Express.urlencoded({ extended: true }))
             .use(Express.static(Path.join(__dirname, '.')));
-
-        //default list of objects
-        this.objectList = ['largeBox', 'smallBox', 'rabbit', 'cannon'];
 
         //Get home page
         this.api.get('/', (request, response) => {
@@ -72,7 +69,6 @@ class Server {
                 //name was one of the displayed options
                 fileName = `./scripts/data/${body.levelOptions}.json`
             }
-
             //write data into file depending on the name of edited level
             FileSystem.outputJSON(fileName, body)
                 .then(() => FileSystem.readJSON(fileName))
@@ -137,21 +133,18 @@ class Server {
             let parameters = request.body;
             let reply = new Reply();
 
-            let folder = "./data";
-            if (parameters.type == "object") {
-                folder += "/library";
-            }
-
+            let folder = "./scripts/data";
             //open some file, the name is in parameters
-            FileSystem.readFile(`${folder}/${parameters.type}.json`, 'utf8')
+            FileSystem.readJSON(`${folder}/${parameters.levelOptions}.json`)
                 .then(fileData => {
                     reply.payload = fileData;
                 })
                 .catch(err => {
                     reply.error(1, "Wrong data")
+                })
+                .finally(() => {
+                    response.send(reply.ok().serialize());
                 });
-
-            response.send(reply.ok().serialize());
         })
 
         //Returns the list of available textures/images 

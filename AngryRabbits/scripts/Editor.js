@@ -15,18 +15,20 @@ export default class Editor {
     //fetch the list of textures
     this.populateTexturesList();
 
-    //id of elements added to the background
-    this.id = 0;
-
     //array of elements added
     this.levelElements = {};
 
+    //id of elements added to the background
+    this.id = 0;
     //handle user save events
     //Set up event handler for level form submit
     $("#level-form").on('submit', event => this.handleSubmitForm(event));
 
     //Set up event handler for object type form submit
     $("#blocks-form").on('submit', event => this.handleSubmitBlockForm(event));
+
+    //Set up event handler for load type form submit
+    $("#load-form").on('submit', event => this.handleSubmitLoad(event));
   }
 
   run() { }
@@ -67,7 +69,7 @@ export default class Editor {
       $.post('/api/get_object_list', { type: 'object' })
         .then(rawData => JSON.parse(rawData))
         .then(response => {
-          var theObjectList =  response.payload;
+          var theObjectList = response.payload;
           theObjectList.forEach(object => {
             $("#object-library").append(`<div id="${object.texture}" class="object-draggable ${object.texture} draggable" draggable="true"></div>`);
             resolve(theObjectList)
@@ -106,12 +108,20 @@ export default class Editor {
     //get form data as JS object
     let paramsArray = $(event.target).serializeArray();
     let body = {};
-    console.log(body);
     paramsArray.forEach(element => {
       body[element.name] = element.value;
     });
+
+    body["entityLists"] = this.levelElements;
+    body["id"] = this.id;
     //Send data to the server...
     $.post("/api/save", body, this.handleServerResponse);
+  }
+
+  //alert on successful response
+  handleServerResponse() {
+    alert("Data was saved successfully");
+    window.location.reload();
   }
 
   //Get information from "new-blocks" form
@@ -126,9 +136,16 @@ export default class Editor {
     });
 
     //Send data to the server...
-    $.post("/api/save_block", body, this.handleServerResponse);
+    $.post("/api/save_block", body, this.handleServerResponseBlock);
   }
 
+  //alert on successful response
+  handleServerResponseBlock() {
+    alert("Data was saved successfully");
+    window.location.reload();
+  }
+
+  //handle draggables in editor
   handleDraggables(listDraggables) {
     listDraggables.forEach(object => {
       let myEl = `#${object.texture}`;
@@ -136,7 +153,7 @@ export default class Editor {
         //get data to transfer
         let transferData = {
           targetId: event.target.id,
-          entity : object,
+          entity: object,
           gameParams: {
             x: event.pageX - Math.floor(event.target.offsetLeft),
             y: event.pageY - Math.floor(event.target.offsetTop)
@@ -157,9 +174,7 @@ export default class Editor {
 
         //get embedded transferData
         let rawData = event.originalEvent.dataTransfer.getData("text");
-        console.log(rawData)
         let transferData = JSON.parse(rawData);
-        console.log(transferData)
         var myBackground = $("#droptarget");
         var element = $(`#${transferData.targetId}`)
 
@@ -175,22 +190,60 @@ export default class Editor {
         myClone.on('contextmenu', event => {
           event.preventDefault()
           var deletedEl = $(event.target);
-          delete this.levelElements[`${event.target.id}`] 
-          console.log(event.target.id)
+          delete this.levelElements[`${event.target.id}`]
           deletedEl.remove();
-          console.log(this.levelElements)
         })
 
         //save element into array
         this.levelElements[`${transferData.targetId}-${this.id}`] = {
           id: `${transferData.targetId}-${this.id}`,
           pos: { "x": event.pageX - transferData.gameParams.x, "y": event.pageY - transferData.gameParams.y },
-            entity: transferData.entity
+          entity: transferData.entity
         }
-        console.log(this.levelElements)
         this.id++;
       });
-      
   }
 
+  //handle load option
+  handleSubmitLoad(event) {
+    event.preventDefault();
+
+    //get form data as JS object
+    let paramsArray = $(event.target).serializeArray();
+    let body = {};
+    paramsArray.forEach(element => {
+      body[element.name] = element.value;
+    });
+    //Send data to the server...
+    $.post("/api/load", body, (response) => this.handleLoadResponse(response));
+  }
+
+  //set loaded data
+  handleLoadResponse(response) {
+    const newData = JSON.parse(response);
+    const levelData = newData.payload
+    const myBackground = $("#droptarget");
+    this.levelElements = levelData.entityLists
+    this.id = parseInt(levelData.id)
+    const levelElements = Object.values(this.levelElements)
+    levelElements.forEach(el => {
+      var element = $(`#${el.entity.texture}`)
+
+      //create a new element in the right  location
+      var myClone = element.clone().prop("id", `${el.id}`)
+      myClone.appendTo(myBackground);
+      myClone.css('position', "absolute");
+      myClone.css('width', "30%");
+      myClone.css('left', el.pos.x + "px");
+      myClone.css('top', el.pos.y + "px");
+
+      //delete clones
+      myClone.on('contextmenu', event => {
+        event.preventDefault()
+        var deletedEl = $(event.target);
+        delete this.levelElements[`${event.target.id}`]
+        deletedEl.remove();
+      })
+    })
+  }
 }
