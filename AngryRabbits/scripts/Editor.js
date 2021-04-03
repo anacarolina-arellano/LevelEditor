@@ -2,165 +2,195 @@
 'use strict'
 
 export default class Editor {
-    constructor(){
-        //hold level data
-        this.gameObjectList = [];
+  constructor() {
+    //hold level data
+    this.gameObjectList = [];
 
-        //fetch the list of levels
-        this.populateLevelList();
+    //fetch the list of levels
+    this.populateLevelList();
 
-        //fetch the list of gameobjects
-        this.populateGameObjectList();
-                  
-        //fetch the list of textures
-        this.populateTexturesList();
+    //fetch the list of gameobjects
+    this.populateGameObjectList();
 
-        //handle user save events
-        //Set up event handler for level form submit
-        $("#level-form").on('submit', event => this.handleSubmitForm(event));
+    //fetch the list of textures
+    this.populateTexturesList();
 
-        //Set up event handler for object type form submit
-        $("#blocks-form").on('submit', event => this.handleSubmitBlockForm(event));
-        
-    }
-    
-    run(){}
+    //id of elements added to the background
+    this.id = 0;
 
-    //Display level list 
-    populateLevelList(){
-        //post message to server
-        $.post('/api/get_level_list/caro')
-          .then(rawData => JSON.parse(rawData))
-          .then(newLevelData => {
-            this.addLevelList(newLevelData);
-          }); 
-    }
+    //array of elements added
+    this.levelElements = {};
 
-    //add html for options (of levels)
-    addLevelList(levelNameList){
-      let id = 0;
-      levelNameList.forEach(level => {
-        $(".level-list").append(`<option id="${id}" value="${level}">${level}</option>`);
-        id++;
+    //handle user save events
+    //Set up event handler for level form submit
+    $("#level-form").on('submit', event => this.handleSubmitForm(event));
+
+    //Set up event handler for object type form submit
+    $("#blocks-form").on('submit', event => this.handleSubmitBlockForm(event));
+  }
+
+  run() { }
+
+  //Display level list 
+  populateLevelList() {
+    //post message to server
+    $.post('/api/get_level_list/caro')
+      .then(rawData => JSON.parse(rawData))
+      .then(newLevelData => {
+        this.addLevelList(newLevelData);
       });
+  }
 
-      //retrieve selected option
-      $(".level-list").change(() => {
-        let myText = $(".level-list").children("option:selected").val();
-        if(myText == "New_Level..."){
-          $("#newName").removeClass("hide");
-        }
-        else{
-          $("#newName").addClass("hide");
-        }
-      });
-    }
+  //add html for options (of levels)
+  addLevelList(levelNameList) {
+    let id = 0;
+    levelNameList.forEach(level => {
+      $(".level-list").append(`<option id="${id}" value="${level}">${level}</option>`);
+      id++;
+    });
 
-    //Display objects available
-    populateGameObjectList(){
-      return new Promise((resolve, reject) => {
-        $.post('/api/get_object_list', {type: 'object'})
-              .then(rawData => JSON.parse(rawData))
-              .then(theObjectList => {
-                theObjectList.forEach(object => {
-                  $("#object-library").append(`<div id="${object}" class="object-draggable ${object} draggable" draggable="true"></div>`);
-                  resolve(theObjectList)
-                });
-                this.handleDraggables(theObjectList);
-              })
-              .catch(error => {
-                reject(error)
-              })
-      })
-    }
+    //retrieve selected option
+    $(".level-list").change(() => {
+      let myText = $(".level-list").children("option:selected").val();
+      if (myText == "New_Level...") {
+        $("#newName").removeClass("hide");
+      }
+      else {
+        $("#newName").addClass("hide");
+      }
+    });
+  }
 
-    //Display textures list 
-    populateTexturesList(){
-      //post message to server
-      $.post('/api/get_textures')
+  //Display objects available
+  populateGameObjectList() {
+    return new Promise((resolve, reject) => {
+      $.post('/api/get_object_list', { type: 'object' })
         .then(rawData => JSON.parse(rawData))
-        .then(newTextureData => {
-          this.addTexturesList(newTextureData);
-        }); 
-    }
+        .then(response => {
+          var theObjectList =  response.payload;
+          theObjectList.forEach(object => {
+            $("#object-library").append(`<div id="${object.texture}" class="object-draggable ${object.texture} draggable" draggable="true"></div>`);
+            resolve(theObjectList)
+          });
+          this.handleDraggables(theObjectList);
+        })
+        .catch(error => {
+          reject(error)
+        })
+    })
+  }
 
-    //add html for options (of textures)
-    addTexturesList(texturesList){
-      let id = 0;
-      texturesList.forEach(texture => {
-        $(".texture-list").append(`<option id="${id}" value="${texture}">${texture}</option>`);
-        id++;
+  //Display textures list 
+  populateTexturesList() {
+    //post message to server
+    $.post('/api/get_textures')
+      .then(rawData => JSON.parse(rawData))
+      .then(newTextureData => {
+        this.addTexturesList(newTextureData);
       });
-    }
-    
-    //Get information from "info-level" form
-    handleSubmitForm(event){
-      event.preventDefault();
-      
-      //get form data as JS object
-      let paramsArray = $(event.target).serializeArray();
-      let body = {};
-      console.log(body);
-      paramsArray.forEach(element => {
-        body[element.name] = element.value;
+  }
+
+  //add html for options (of textures)
+  addTexturesList(texturesList) {
+    let id = 0;
+    texturesList.forEach(texture => {
+      $(".texture-list").append(`<option id="${id}" value="${texture}">${texture}</option>`);
+      id++;
+    });
+  }
+
+  //Get information from "info-level" form
+  handleSubmitForm(event) {
+    event.preventDefault();
+
+    //get form data as JS object
+    let paramsArray = $(event.target).serializeArray();
+    let body = {};
+    console.log(body);
+    paramsArray.forEach(element => {
+      body[element.name] = element.value;
+    });
+    //Send data to the server...
+    $.post("/api/save", body, this.handleServerResponse);
+  }
+
+  //Get information from "new-blocks" form
+  handleSubmitBlockForm(event) {
+    event.preventDefault();
+
+    //get form data as JS object
+    let paramsArray = $(event.target).serializeArray();
+    let body = {};
+    paramsArray.forEach(element => {
+      body[element.name] = element.value;
+    });
+
+    //Send data to the server...
+    $.post("/api/save_block", body, this.handleServerResponse);
+  }
+
+  handleDraggables(listDraggables) {
+    listDraggables.forEach(object => {
+      let myEl = `#${object.texture}`;
+      $(myEl).on('dragstart', event => {
+        //get data to transfer
+        let transferData = {
+          targetId: event.target.id,
+          entity : object,
+          gameParams: {
+            x: event.pageX - Math.floor(event.target.offsetLeft),
+            y: event.pageY - Math.floor(event.target.offsetTop)
+          }
+        };
+        //attach transfer data to the event
+        event.originalEvent.dataTransfer.setData("text", JSON.stringify(transferData));
+        event.originalEvent.dataTransfer.effectAllowed = "move";
       });
-      //Send data to the server...
-      $.post("/api/save", body, this.handleServerResponse);
-    }
-
-    //Get information from "new-blocks" form
-    handleSubmitBlockForm(event){
-      event.preventDefault();
-      
-      //get form data as JS object
-      let paramsArray = $(event.target).serializeArray();
-      let body = {};
-      paramsArray.forEach(element => {
-        body[element.name] = element.value;
-      });
-
-      //Send data to the server...
-      $.post("/api/save_block", body, this.handleServerResponse);
-    }
-
-    handleDraggables(listDraggables){
-      listDraggables.forEach(object => {
-        let myEl = `#${object}`;
-        $(myEl).on('dragstart', event => {
-          //get data to transfer
-          let transferData = {
-            targetId: event.target.id,
-            gameParams: {
-              x : event.pageX - Math.floor(event.target.offsetLeft),
-              y : event.pageY- Math.floor(event.target.offsetTop)
-            }
-          };
-         //attach transfer data to the event
-          event.originalEvent.dataTransfer.setData("text", JSON.stringify(transferData));
-          event.originalEvent.dataTransfer.effectAllowed = "move";
-      });        
     });
 
     $('#droptarget')
       .on('dragover', event => {
-          event.preventDefault()
+        event.preventDefault()
       })
       .on('drop', event => {
-       // event.preventDefault();
-        
+        // event.preventDefault();
+
         //get embedded transferData
         let rawData = event.originalEvent.dataTransfer.getData("text");
-        let i = 0;
+        console.log(rawData)
         let transferData = JSON.parse(rawData);
+        console.log(transferData)
         var myBackground = $("#droptarget");
-        myBackground.append(`<div id="${transferData.targetId}-${i}" class="${transferData.targetId}"></div>`)
-        $(`#${transferData.targetId}`).css('position', "absolute");
-        $(`#${transferData.targetId}`).css('width', "30%");
-        $(`#${transferData.targetId}`).css('left', event.pageX - transferData.gameParams.x + "px");
-        $(`#${transferData.targetId}`).css('top', event.pageY - transferData.gameParams.y + "px");
-        i++;
+        var element = $(`#${transferData.targetId}`)
+
         //create a new element in the right  location
+        var myClone = element.clone().prop("id", `${transferData.targetId}-${this.id}`)
+        myClone.appendTo(myBackground);
+        myClone.css('position', "absolute");
+        myClone.css('width', "30%");
+        myClone.css('left', event.pageX - transferData.gameParams.x + "px");
+        myClone.css('top', event.pageY - transferData.gameParams.y + "px");
+
+        //delete clones
+        myClone.on('contextmenu', event => {
+          event.preventDefault()
+          var deletedEl = $(event.target);
+          delete this.levelElements[`${event.target.id}`] 
+          console.log(event.target.id)
+          deletedEl.remove();
+          console.log(this.levelElements)
+        })
+
+        //save element into array
+        this.levelElements[`${transferData.targetId}-${this.id}`] = {
+          id: `${transferData.targetId}-${this.id}`,
+          pos: { "x": event.pageX - transferData.gameParams.x, "y": event.pageY - transferData.gameParams.y },
+            entity: transferData.entity
+        }
+        console.log(this.levelElements)
+        this.id++;
       });
+      
   }
 
 }

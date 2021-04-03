@@ -5,30 +5,31 @@ import Path from 'path'
 import HTTP from 'http'
 import Express from 'express'
 import FileSystem from 'fs-extra'
+import fs from 'fs'
 const __dirname = Path.resolve()
 const PORT = 3000
 import Reply from './scripts/Reply.js'
 
 class Server {
-    constructor(){
+    constructor() {
 
         this.title = "Angry Rabbits";
         this.api = Express();
         this.api.use(Express.json())
-                .use(Express.urlencoded({extended: false}))
-                .use(Express.static(Path.join(__dirname, '.')));
+            .use(Express.urlencoded({ extended: false }))
+            .use(Express.static(Path.join(__dirname, '.')));
 
         //default list of objects
         this.objectList = ['largeBox', 'smallBox', 'rabbit', 'cannon'];
 
         //Get home page
         this.api.get('/', (request, response) => {
-            response.sendFile('./index.html', {title: 'Angry Rabbits'});
+            response.sendFile('./index.html', { title: 'Angry Rabbits' });
         })
 
         //Get editor page
         this.api.get('/', (request, response) => {
-            response.sendFile('./editor.html', {title:`${this.title} Editor`});
+            response.sendFile('./editor.html', { title: `${this.title} Editor` });
         })
 
         //Returns the list of levels that are saved in the editor
@@ -39,17 +40,17 @@ class Server {
                 //handling error
                 if (err) {
                     return console.error(err);
-                } 
+                }
                 //listing all files using forEach
                 files.forEach(file => {
                     //consulted page to get the extension: https://dev.to/jalal246/detect-extension-in-a-directory-using-node-js-b9l
-                    if(file.split(".").pop() == "json"){
+                    if (file.split(".").pop() == "json") {
                         //page consulted: https://stackoverflow.com/questions/4250364/how-to-trim-a-file-extension-from-a-string-in-javascript
                         levelNameList.push(file.split('.').slice(0, -1).join('.'))
                     }
                 });
                 //provide option to add level with new name
-                levelNameList.push("New_Level...") 
+                levelNameList.push("New_Level...")
                 response.send(JSON.stringify(levelNameList));
             });
         });
@@ -63,15 +64,15 @@ class Server {
 
             let fileName;
             //check if user chose to add a level with a new name
-            if(`${body.levelOptions}` == "New_Level..."){
+            if (`${body.levelOptions}` == "New_Level...") {
                 //save file with specified name
                 fileName = `./scripts/data/${body.newName}.json`
             }
-            else{
+            else {
                 //name was one of the displayed options
                 fileName = `./scripts/data/${body.levelOptions}.json`
             }
-            
+
             //write data into file depending on the name of edited level
             FileSystem.outputJSON(fileName, body)
                 .then(() => FileSystem.readJSON(fileName))
@@ -83,7 +84,7 @@ class Server {
                     console.error(err);
                 })
                 .then(() => response.send(reply.ok().serialize()));
-                
+
         });
 
         //save the block type that the user created
@@ -110,27 +111,45 @@ class Server {
 
         //Returns the list of objects saved in the editor
         this.api.post('/api/get_object_list', (request, response) => {
-            response.send(JSON.stringify(this.objectList));
+            let reply = new Reply();
+            let fileNames = fs.readdirSync("./scripts/data/library")
+            //map the file names of the objects to read them
+            let filePromises = fileNames.map(fileName => {
+                //turns an array of strings to promise of JSON data
+                return FileSystem.readJSON(`./scripts/data/library/${fileName}`);
+            })
+            //Executes the array of promises, only gets resolves when array of promises is resolved
+            Promise.all(filePromises)
+                .then(fileData => {
+                    reply.payload = fileData;
+                })
+                .catch(err => {
+                    reply.error(1, "Wrong data")
+                })
+                .then(() => {
+                    response.send(reply.ok().serialize())
+                });
+
         });
-        
+
         //Returns the information of a saved level
         this.api.post('/api/load', (request, response) => {
             let parameters = request.body;
             let reply = new Reply();
 
             let folder = "./data";
-            if(parameters.type == "object"){
+            if (parameters.type == "object") {
                 folder += "/library";
             }
 
             //open some file, the name is in parameters
             FileSystem.readFile(`${folder}/${parameters.type}.json`, 'utf8')
-            .then(fileData => {
-                reply.payload = fileData;
-            })
-            .catch(err => {
-                reply.error(1, "Wrong data")
-            });
+                .then(fileData => {
+                    reply.payload = fileData;
+                })
+                .catch(err => {
+                    reply.error(1, "Wrong data")
+                });
 
             response.send(reply.ok().serialize());
         })
@@ -143,11 +162,11 @@ class Server {
                 //handling error
                 if (err) {
                     return console.error(err);
-                } 
+                }
                 //listing all files using forEach
                 files.forEach(file => {
                     //consulted page to get the extension: https://dev.to/jalal246/detect-extension-in-a-directory-using-node-js-b9l
-                    if(file.split(".").pop() == "png"){
+                    if (file.split(".").pop() == "png") {
                         //page consulted: https://stackoverflow.com/questions/4250364/how-to-trim-a-file-extension-from-a-string-in-javascript
                         texturesList.push(file.split('.').slice(0, -1).join('.'))
                     }
@@ -161,7 +180,7 @@ class Server {
     }
 
     //run the project and listen to the specified port
-    run(){
+    run() {
         this.api.set('port', PORT);
         this.listener = HTTP.createServer(this.api);
         this.listener.listen(PORT);
