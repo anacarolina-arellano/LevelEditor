@@ -38,6 +38,8 @@ class Server {
                 if (err) {
                     return console.error(err);
                 }
+                //provide option to add level with new name
+                levelNameList.push("New_Level...")
                 //listing all files using forEach
                 files.forEach(file => {
                     //consulted page to get the extension: https://dev.to/jalal246/detect-extension-in-a-directory-using-node-js-b9l
@@ -46,8 +48,6 @@ class Server {
                         levelNameList.push(file.split('.').slice(0, -1).join('.'))
                     }
                 });
-                //provide option to add level with new name
-                levelNameList.push("New_Level...")
                 response.send(JSON.stringify(levelNameList));
             });
         });
@@ -90,6 +90,7 @@ class Server {
             //Reply
             let reply = new Reply();
 
+            //create a new filename
             const fileName = `./scripts/data/library/object-${body.type}.json`
             this.objectList.push(body.texture);
             //write data into file depending on the name of edited level

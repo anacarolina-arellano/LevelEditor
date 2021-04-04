@@ -54,11 +54,11 @@ export default class Editor {
     //retrieve selected option
     $(".level-list").change(() => {
       let myText = $(".level-list").children("option:selected").val();
-      if (myText == "New_Level...") {
-        $("#newName").removeClass("hide");
-      }
-      else {
+      if (myText != "New_Level...") {
         $("#newName").addClass("hide");
+      }
+      else{
+        $("#newName").removeClass("hide");
       }
     });
   }
@@ -214,15 +214,30 @@ export default class Editor {
     paramsArray.forEach(element => {
       body[element.name] = element.value;
     });
-    //Send data to the server...
+    //Send request to the server...
     $.post("/api/load", body, (response) => this.handleLoadResponse(response));
   }
 
   //set loaded data
   handleLoadResponse(response) {
+    //get data from the response 
     const newData = JSON.parse(response);
     const levelData = newData.payload
     const myBackground = $("#droptarget");
+    
+    //the level already has a name, so hide the div of new name
+    $("#newName").addClass("hide");
+
+    //set level data saved into "level-form"
+    const myForm = $("#level-form");
+    myForm[0].levelOptions.value = levelData.levelOptions;
+    myForm[0].obstacles.value = levelData.obstacles;
+    myForm[0].numShot.value = levelData.numShot;
+    myForm[0].oneScore.value = levelData.oneScore;
+    myForm[0].twoScore.value = levelData.twoScore;
+    myForm[0].threeScore.value = levelData.threeScore;
+
+    //set placed elements into background area
     this.levelElements = levelData.entityLists
     this.id = parseInt(levelData.id)
     const levelElements = Object.values(this.levelElements)

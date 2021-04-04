@@ -121,7 +121,6 @@ footer{
     background-color: gray;
     border-radius: 10px;
     height: 1.5em;
-    /*#1ca1d6;*/
 }
 .my-draggables #object-library.boxes {
     background-size: contain;
@@ -171,8 +170,21 @@ footer{
     margin-right: auto;
     color: white;
     width: 1280px;
+    text-align: center;
+    background-color: #E8eaeb;
+    border-radius: 10px;
+    color:black;
 }
-
+.loadOpt h1 {
+    background-color: gray;
+    border-radius: 10px;
+    height: 1.5em;
+    font-size: 27px;
+    color: white;
+}
 .hide{
     display: none ;
+}
+.load-form{
+    display: inline-grid;
 }
